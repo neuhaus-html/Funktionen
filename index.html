@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lernplattform: Funktionen - Klasse 8</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- MathJax v3 Configuration & CDN -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            triggerMathJax();
+          });
+        }
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+    /* Custom scrollbar and glassmorphism styling */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .notebook-paper {
+      background-color: #1e293b;
+      background-image: radial-gradient(#334155 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    /* MathJax inline tweaking for text flow */
+    mjx-container {
+      display: inline-block !important;
+      margin: 0 2px !important;
+      outline: none !important;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased text-slate-200">
+
+  <!-- Top Header Nav -->
+  <header class="bg-slate-950 border-b border-slate-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-500/20">
+          <i class="fa-solid me-1 fa-chart-line text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg text-white leading-tight">Funktionen Lernportal</h1>
+          <p class="text-xs text-indigo-400 font-medium">Mathematik Klasse 8 &bull; Interaktive Module</p>
+        </div>
+      </div>
+
+      <!-- Quick Code Unlocker in Header -->
+      <div class="flex items-center space-x-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
+        <span class="text-xs text-slate-400 px-2 font-medium hidden sm:inline"><i class="fa-solid fa-key text-amber-400 mr-1"></i> Lehrer-Code:</span>
+        <input type="text" id="global-code-input" placeholder="z.B. SCHUMMLER 65" class="bg-slate-800 text-xs text-amber-300 placeholder-slate-500 px-3 py-1.5 rounded-lg border border-slate-700 focus:outline-none focus:border-indigo-500 uppercase font-mono w-48">
+        <button onclick="unlockByGlobalCode()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition shadow">
+          Einlösen
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <nav class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-1 border-t border-slate-800/60 no-scrollbar">
+      <button onclick="switchTab(1)" id="tab-btn-1" class="tab-btn px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2">
+        <i class="fa-solid fa-basketball text-amber-500"></i> Modul 1: Was ist eine Funktion?
+      </button>
+      <button onclick="switchTab(2)" id="tab-btn-2" class="tab-btn px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <i class="fa-solid fa-map-location-dot text-emerald-400"></i> Modul 2: Punkte & Graphen
+      </button>
+      <button onclick="switchTab(3)" id="tab-btn-3" class="tab-btn px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <i class="fa-solid fa-table-cells text-cyan-400"></i> Modul 3: Wertetabellen
+      </button>
+      <button onclick="switchTab(4)" id="tab-btn-4" class="tab-btn px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <i class="fa-solid fa-ruler-vertical text-purple-400"></i> Modul 4: Vertikalentest
+      </button>
+      <button onclick="switchTab(5)" id="tab-btn-5" class="tab-btn px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <i class="fa-solid fa-flask text-rose-400"></i> Modul 5: Füllgraphen
+      </button>
+      <button onclick="switchTab(6)" id="tab-btn-6" class="tab-btn px-4 py-2.5 text-xs font-semibold whitespace-nowrap border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2">
+        <i class="fa-solid fa-book-bookmark text-amber-400"></i> Modul 6: Merkeintrag
+      </button>
+    </nav>
+  </header>
+
+  <!-- Global Message Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 overflow-y-auto">
+
+    <!-- MODUL 1 -->
+    <section id="module-1" class="tab-content space-y-6">
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase tracking-wider">Modul 1</span>
+          <h2 class="text-xl font-bold text-white">Eindeutigkeit: Was ist eine Funktion?</h2>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Eine <strong>Funktion</strong> ist eine eindeutige Zuordnung: Jedem Eingabewert $x$ (z.B. Zeit $t$ in Sekunden) wird <strong>genau ein</strong> Ausgabewert $y$ bzw. $f(x)$ (z.B. Ballhöhe $h$ in Metern) zugeordnet. 
+        </p>
+      </div>
+
+      <!-- Interactive Canvas Simulation: Basketball Wurf -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-semibold text-white text-sm flex items-center gap-2">
+                <i class="fa-solid fa-play text-indigo-400"></i> Simulation: Basketball-Flugbahn $h(t)$
+              </h3>
+              <span id="m1-time-display" class="font-mono text-xs bg-indigo-900/60 border border-indigo-700/50 text-indigo-200 px-2.5 py-1 rounded-lg">
+                $t = 1{,}0\text{ s} \implies h(t) = 4{,}8\text{ m}$
+              </span>
+            </div>
+
+            <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+              <canvas id="basketball-canvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center gap-4">
+              <label class="text-xs font-medium text-slate-300 whitespace-nowrap">Zeit $t$ (Sek.):</label>
+              <input type="range" id="m1-slider" min="0" max="2.8" step="0.05" value="1.0" class="w-full accent-indigo-500 bg-slate-800 rounded-lg h-2 cursor-pointer">
+              <button onclick="toggleBasketballAnim()" id="m1-play-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-1">
+                <i class="fa-solid fa-play"></i> Start
+              </button>
+            </div>
+            <p class="text-xs text-slate-400 italic">
+              Beobachtung: Für jeden Zeitpunkt $t$ befindet sich der Ball auf genau einer Höhe $h(t)$. Ein Ball kann nicht gleichzeitig auf zwei verschiedenen Höhen sein!
+            </p>
+          </div>
+        </div>
+
+        <!-- Exercises for Module 1 -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Aufgabe 1 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 1: Begriff Eindeutigkeit</h4>
+             
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Warum beschreibt die Zuordnung $\text{Zeit } t \mapsto \text{Höhe } h(t)$ eine Funktion, aber die Zuordnung $\text{Höhe } h \mapsto \text{Zeit } t$ im Allgemeinen nicht?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-funk-101" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('funk-101', 'FUNK-101')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Prüfen</button>
+            </div>
+            <div id="sol-funk-101" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (FUNK-101):</p>
+              <p>Zu jedem Zeitpunkt $t$ gibt es <strong>genau eine</strong> Höhe $h$. Umgekehrt kann der Ball aber auf ein und derselben Höhe (z. B. $h = 3\text{ m}$) zweimal sein – einmal beim Steigen und einmal beim Fallen! Damit wäre $h \mapsto t$ nicht eindeutig.</p>
+            </div>
+          </div>
+
+          <!-- Aufgabe 2 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 2: Zuordnung im Alltag</h4>
+              
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Gegeben ist die Zuordnung $x \mapsto f(x)$ mit $f(x) = 0{,}25x + 2$. Berechne den Funktionswert an der Stelle $x = 4$.
+            </p>
+            <div class="flex gap-2 mb-2">
+              <input type="number" id="m1-a2-calc" placeholder="Ergebnis für f(4)..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white w-full">
+              <button onclick="checkM1A2()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Testen</button>
+            </div>
+            <div class="flex gap-2">
+              <input type="text" id="code-funk-102" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('funk-102', 'FUNK-102')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Musterlösung</button>
+            </div>
+            <div id="sol-funk-102" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (FUNK-102):</p>
+              <p>Einsetzen von $x = 4$ in $f(x)$:</p>
+              <p>$$f(4) = 0{,}25 \cdot 4 + 2 = 1 + 2 = 3$$</p>
+            </div>
+          </div>
+
+          <!-- Aufgabe 3 [⭐ Bonus] -->
+          <div class="glass-card p-4 rounded-xl border border-amber-500/30 bg-amber-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-amber-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 3 [⭐ Bonus]: Mehrfachzuordnungen</h4>
+              
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Gegeben ist die Relation $x^2 + y^2 = 25$. Ist dies eine Funktion $y = f(x)$? Begründe mathematisch für den Wert $x = 3$.
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-bonus-103" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('bonus-103', 'BONUS-103')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-bonus-103" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (BONUS-103):</p>
+              <p>Setzen wir $x = 3$ ein: $3^2 + y^2 = 25 \implies 9 + y^2 = 25 \implies y^2 = 16$.</p>
+              <p>Daraus folgen zwei Lösungen: $y_1 = +4$ und $y_2 = -4$. Da $x=3$ zwei Werte zugeordnet werden, liegt <strong>keine Funktion</strong> vor!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 2 -->
+    <section id="module-2" class="tab-content space-y-6 hidden">
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-bold uppercase tracking-wider">Modul 2</span>
+          <h2 class="text-xl font-bold text-white">Punkte & Graphen lesen</h2>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Punkte in einem Koordinatensystem werden im Format $P(x \mid y)$ angegeben. In Funktionsgraphen entspricht $x$ meist der Stelle (z.B. Zeit) und $y = f(x)$ dem zugehörigen Wert (z.B. Strecke $s(t)$).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Graph Canvas: Zugfahrt Weg-Zeit Diagramm -->
+        <div class="lg:col-span-7 glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-semibold text-white text-sm flex items-center gap-2">
+                <i class="fa-solid fa-train text-emerald-400"></i> Zugfahrt: Weg-Zeit-Diagramm $s(t)$
+              </h3>
+              <span id="m2-hover-coords" class="font-mono text-xs bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-lg">
+                Klicke auf den Graphen...
+              </span>
+            </div>
+            <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800 cursor-crosshair">
+              <canvas id="m2-train-canvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mt-3 italic">
+            Tipp: Bewege den Mauszeiger über den Graphen, um Punkte $P(t \mid s)$ abzulesen.
+          </p>
+        </div>
+
+        <!-- Module 2 Exercises -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Aufgabe 6 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 6: Punkte ablesen</h4>
+            
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Lies aus dem Graphen ab: Wie weit ist der Zug nach $t = 30\text{ min}$ gefahren? Gib die Koordinate $P(30 \mid s)$ an.
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-read-201" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('read-201', 'READ-201')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-read-201" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (READ-201):</p>
+              <p>Bei $t = 30\text{ min}$ zeigt die Kurve auf $s = 40\text{ km}$. Der Punkt lautet $P(30 \mid 40)$.</p>
+            </div>
+          </div>
+
+          <!-- Aufgabe 8 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 8: Pause erkennen</h4>
+             
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              In welchem Zeitintervall $[t_1; t_2]$ steht der Zug am Bahnhof still? Was zeichnet den Graphen in diesem Bereich aus?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-read-202" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('read-202', 'READ-202')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-read-202" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (READ-202):</p>
+              <p>Der Zug steht im Intervall $[40\text{ min}; 60\text{ min}]$ still. Der Graph verläuft dort waagerecht (Steigung $m = 0$), d.h. der Weg $s(t) = 50\text{ km}$ ändert sich nicht.</p>
+            </div>
+          </div>
+
+          <!-- Aufgabe 9 [⭐ Bonus] -->
+          <div class="glass-card p-4 rounded-xl border border-amber-500/30 bg-amber-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-amber-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 9 [⭐ Bonus]: Geschwindigkeit $v$</h4>
+            
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Berechne die durchschnittliche Geschwindigkeit $v$ in km/h auf dem ersten Streckenabschnitt von $t=0$ bis $t=30\text{ min}$.
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-bonus-203" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('bonus-203', 'BONUS-203')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-bonus-203" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (BONUS-203):</p>
+              <p>In $30\text{ min} = 0{,}5\text{ h}$ werden $\Delta s = 40\text{ km}$ zurückgelegt:</p>
+              <p>$$v = \frac{\Delta s}{\Delta t} = \frac{40\text{ km}}{0{,}5\text{ h}} = 80\text{ km/h}$$</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 3 -->
+    <section id="module-3" class="tab-content space-y-6 hidden">
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full text-xs font-bold uppercase tracking-wider">Modul 3</span>
+          <h2 class="text-xl font-bold text-white">Wertetabellen & Interaktiver Plotter</h2>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Mit einer Wertetabelle berechnet man für verschiedene $x$-Werte die zugehörigen Funktionswerte $f(x)$ und zeichnet die Punkte $P(x \mid f(x))$ in ein Koordinatensystem.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Plotter Controls & Dynamic Table -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="glass-card p-5 rounded-2xl space-y-4">
+            <h3 class="font-semibold text-white text-sm flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-cyan-400"></i> Funktionsgleichung anpassen
+            </h3>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-slate-300 block mb-1">Steigung $m$:</label>
+                <input type="number" id="m3-m" value="0.5" step="0.25" class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-cyan-300 font-mono w-full" onchange="updatePlotter()">
+              </div>
+              <div>
+                <label class="text-xs text-slate-300 block mb-1">Y-Achsenabschnitt $b$:</label>
+                <input type="number" id="m3-b" value="1.0" step="0.5" class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-cyan-300 font-mono w-full" onchange="updatePlotter()">
+              </div>
+            </div>
+
+            <div class="text-center p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+              <span id="m3-formula-display" class="font-mono text-cyan-300 text-sm">
+                $f(x) = 0{,}5x + 1$
+              </span>
+            </div>
+
+            <!-- Dynamic Table -->
+            <div>
+              <h4 class="text-xs font-bold text-slate-300 mb-2">Generierte Wertetabelle:</h4>
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs text-center border-collapse">
+                  <thead>
+                    <tr class="bg-slate-800 text-slate-300">
+                      <th class="p-2 border border-slate-700">$x$</th>
+                      <th class="p-2 border border-slate-700">-2</th>
+                      <th class="p-2 border border-slate-700">-1</th>
+                      <th class="p-2 border border-slate-700">0</th>
+                      <th class="p-2 border border-slate-700">1</th>
+                      <th class="p-2 border border-slate-700">2</th>
+                      <th class="p-2 border border-slate-700">3</th>
+                    </tr>
+                  </thead>
+                  <tbody id="m3-table-body" class="font-mono text-cyan-300">
+                    <!-- Dynamic JS insertion -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exercise 4 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 4: Wertetabelle berechnen</h4>
+            
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Berechne für $f(x) = 2x - 1$ den Wert $f(-2)$.
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-tab-301" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('tab-301', 'TAB-301')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-tab-301" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (TAB-301):</p>
+              <p>$$f(-2) = 2 \cdot (-2) - 1 = -4 - 1 = -5$$</p>
+              <p>Der Punkt lautet $P(-2 \mid -5)$.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Plotter Canvas -->
+        <div class="lg:col-span-7 glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-semibold text-white text-sm flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-cyan-400"></i> Funktionsgraph im Koordinatensystem
+              </h3>
+              <span class="text-xs text-slate-400">Einheit: 1 Kästchen = 1 ME</span>
+            </div>
+            <div class="relative w-full aspect-square max-h-[420px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 mx-auto">
+              <canvas id="m3-plotter-canvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+
+          <!-- Bonus Exercise 10 -->
+          <div class="mt-4 glass-card p-4 rounded-xl border border-amber-500/30 bg-amber-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-amber-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 10 [⭐ Bonus]: Quadratische Funktion</h4>
+             
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Wie lautet der tiefste Punkt (Scheitelpunkt) der Parabel $g(x) = x^2 - 3$?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-bonus-303" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('bonus-303', 'BONUS-303')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-bonus-303" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (BONUS-303):</p>
+              <p>Da $x^2 \ge 0$ ist, wird der kleinste Wert bei $x = 0$ erreicht mit $g(0) = -3$. Der Scheitelpunkt lautet $S(0 \mid -3)$.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 4 -->
+    <section id="module-4" class="tab-content space-y-6 hidden">
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full text-xs font-bold uppercase tracking-wider">Modul 4</span>
+          <h2 class="text-xl font-bold text-white">Vertikalentest / Arnes Linealregel</h2>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Schiebe eine senkrechte Linie (Lineal) über den Graphen. Wenn die vertikale Linie die Kurve an <strong>mehr als einem Punkt</strong> schneidet, handelt es sich <strong>nicht</strong> um eine Funktion!
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Interactive Ruler Canvas -->
+        <div class="lg:col-span-7 glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+              <h3 class="font-semibold text-white text-sm flex items-center gap-2">
+                <i class="fa-solid fa-ruler-vertical text-purple-400"></i> Vertikales Lineal verschieben
+              </h3>
+              <div id="m4-status-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                1 Schnittpunkt &rarr; Ist eine Funktion!
+              </div>
+            </div>
+
+            <div class="relative w-full aspect-square max-h-[380px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 mx-auto">
+              <canvas id="m4-ruler-canvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center gap-3">
+              <label class="text-xs font-medium text-slate-300 whitespace-nowrap">Lineal-Position $x_0$:</label>
+              <input type="range" id="m4-ruler-slider" min="-3" max="3" step="0.05" value="1.0" class="w-full accent-purple-500 bg-slate-800 rounded-lg h-2 cursor-pointer">
+              <span id="m4-x-val" class="font-mono text-xs text-purple-300 w-12 text-right">$x = 1{,}0$</span>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button onclick="setRulerCurve('parabola')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-slate-200 border border-slate-700 font-medium">Parabel $f(x) = 0{,}5x^2$</button>
+              <button onclick="setRulerCurve('circle')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-slate-200 border border-slate-700 font-medium">Kreis $x^2 + y^2 = 4$</button>
+              <button onclick="setRulerCurve('s-curve')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-slate-200 border border-slate-700 font-medium">Liegende Parabel $x = y^2$</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercises 11, 12, 13 -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Bonus 11 -->
+          <div class="glass-card p-4 rounded-xl border border-purple-500/30 bg-purple-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 11 [⭐ Bonus]: Vertikalentest Liegende Parabel</h4>
+              
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Schalte im Simulator auf „Liegende Parabel $x = y^2$“. Wie viele Schnittpunkte gibt es bei $x_0 = 2$?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-ruler-401" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('ruler-401', 'RULER-401')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-ruler-401" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (RULER-401):</p>
+              <p>Es gibt <strong>2 Schnittpunkte</strong> ($y = +\sqrt{2} \approx 1{,}41$ und $y = -\sqrt{2} \approx -1{,}41$). Damit ist $x = y^2$ <strong>keine Funktion</strong>!</p>
+            </div>
+          </div>
+
+          <!-- Bonus 12 -->
+          <div class="glass-card p-4 rounded-xl border border-purple-500/30 bg-purple-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 12 [⭐ Bonus]: Halbkreis als Funktion</h4>
+             
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Ein ganzer Kreis ist keine Funktion. Warum ist der obere Halbkreis $f(x) = +\sqrt{4 - x^2}$ hingegen doch eine Funktion?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-bonus-402" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('bonus-402', 'BONUS-402')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-bonus-402" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (BONUS-402):</p>
+              <p>Durch das positive Vorzeichen $+\sqrt{\dots}$ wählt man nur den oberen Wert. Jedes $x \in [-2; 2]$ hat somit genau <strong>einen</strong> $y$-Wert. Der Vertikalentest liefert genau 1 Schnittpunkt!</p>
+            </div>
+          </div>
+
+          <!-- Bonus 13 -->
+          <div class="glass-card p-4 rounded-xl border border-purple-500/30 bg-purple-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 13 [⭐ Bonus]: Randfälle</h4>
+           
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Was passiert beim Vertikalentest, wenn eine vertikale Linie den Graphen an 0 Stellen schneidet (z.B. außerhalb des Definitionsbereichs)?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-bonus-403" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('bonus-403', 'BONUS-403')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-bonus-403" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (BONUS-403):</p>
+              <p>0 Schnittpunkte bedeuten lediglich, dass diese Stelle $x$ nicht im <strong>Definitionsbereich</strong> $\mathbb{D}$ der Funktion liegt. Eindeutigkeit verlangt nur: Höchstens 1 Schnittpunkt pro $x$!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 5 -->
+    <section id="module-5" class="tab-content space-y-6 hidden">
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full text-xs font-bold uppercase tracking-wider">Modul 5</span>
+          <h2 class="text-xl font-bold text-white">Sachzusammenhänge & Füllgraphen</h2>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Wird ein Gefäß mit konstanter Zuflussrate befüllt, hängt der Verlauf des Füllgraphen $h(t)$ (Füllhöhe über Zeit) von der Form des Gefäßes ab.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Live Fill Animation & Graph -->
+        <div class="lg:col-span-7 glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-3">
+              <h3 class="font-semibold text-white text-sm flex items-center gap-2">
+                <i class="fa-solid fa-faucet-drip text-rose-400"></i> Gefäß-Befüllung Simultangraph
+              </h3>
+              <select id="m5-vessel-select" onchange="resetFillAnim()" class="bg-slate-900 border border-slate-700 text-xs text-rose-300 rounded-lg px-2.5 py-1 focus:outline-none">
+                <option value="cylinder">1. Zylinder (Gleichmäßig)</option>
+                <option value="cone">2. Trichter / Kegel (Unten breit)</option>
+                <option value="erlenmeyer">3. Erlenmeyerkolben (Stufe)</option>
+                <option value="sphere">4. Kugelgefäß (Bauchig)</option>
+              </select>
+            </div>
+
+            <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+              <canvas id="m5-fill-canvas" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between gap-4">
+            <button onclick="toggleFillAnim()" id="m5-fill-btn" class="bg-rose-600 hover:bg-rose-500 text-white text-xs px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2">
+              <i class="fa-solid fa-play"></i> Wasser aufdrehen
+            </button>
+            <button onclick="resetFillAnim()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs px-3 py-2 rounded-lg font-medium transition">
+              <i class="fa-solid fa-rotate-right"></i> Zurücksetzen
+            </button>
+          </div>
+        </div>
+
+        <!-- Exercises 14, 15, 16 -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Aufgabe 14 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 14: Zylinder & Geraden</h4>
+           
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Warum verläuft der Füllgraph beim Zylinder als eine fehlerfreie **lineare Gerade**?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-fill-501" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('fill-501', 'FILL-501')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-fill-501" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (FILL-501):</p>
+              <p>Da die Grundfläche überall genau gleich breit ist, steigt die Wasserhöhe $h(t)$ in gleichen Zeitspannen immer um denselben Betrag $\Delta h$. Das entspricht einer konstanten Steigung $m$.</p>
+            </div>
+          </div>
+
+          <!-- Aufgabe 15 -->
+          <div class="glass-card p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-white">Aufgabe 15: Trichter & Krümmung</h4>
+             
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Beschreibe den Graph beim Trichter (unten breit, oben eng): Steigt die Höhe anfangs schneller oder langsamer?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-fill-502" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('fill-502', 'FILL-502')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-fill-502" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (FILL-502):</p>
+              <p>Anfangs ist das Gefäß breit, deshalb steigt $h(t)$ <strong>langsam</strong> (flacher Graph). Je höher das Wasser steigt, desto enger wird der Trichter – die Höhe steigt immer <strong>schneller</strong> (linker/steiler Bogen).</p>
+            </div>
+          </div>
+
+          <!-- Bonus 16 -->
+          <div class="glass-card p-4 rounded-xl border border-amber-500/30 bg-amber-950/10">
+            <div class="flex justify-between items-start mb-2">
+              <h4 class="text-sm font-bold text-amber-300 flex items-center gap-1.5"><i class="fa-solid fa-star text-amber-400"></i> Aufgabe 16 [⭐ Bonus]: Erlenmeyerkolben</h4>
+             
+            </div>
+            <p class="text-xs text-slate-300 mb-3">
+              Der Erlenmeyerkolben besteht aus einem breiten Unterteil und einem engen Hals. Welchen Knick weist der Graph an der Übergangsstelle auf?
+            </p>
+            <div class="flex gap-2">
+              <input type="text" id="code-bonus-503" placeholder="Code eingeben..." class="bg-slate-900 text-xs px-3 py-2 rounded-lg border border-slate-700 text-white font-mono uppercase w-full">
+              <button onclick="checkCode('bonus-503', 'BONUS-503')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-2 rounded-lg font-semibold">Lösung</button>
+            </div>
+            <div id="sol-bonus-503" class="hidden mt-3 p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-lg text-xs text-emerald-200 space-y-1">
+              <p class="font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Musterlösung (BONUS-503):</p>
+              <p>Beim Übergang vom breiten Körper in den engen Zylinderhals macht der Graph eine scharfe Kurve bzw. einen Steigungssprung: Von einer flachen Krümmung schlägt der Graph schlagartig in eine steile Gerade um!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODUL 6 -->
+    <section id="module-6" class="tab-content space-y-6 hidden">
+      <div class="glass-card p-6 rounded-2xl border border-slate-800">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-xs font-bold uppercase tracking-wider">Modul 6</span>
+          <h2 class="text-xl font-bold text-white">Geführter Merkeintrag: Lückentext</h2>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Wähle die passenden Fachbegriffe aus, um deinen offiziellen Merkeintrag für das Mathematik-Heft zu vervollständigen!
+        </p>
+      </div>
+
+      <!-- Lückentext Baukasten Form -->
+      <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-5">
+        <h3 class="font-bold text-white text-base border-b border-slate-800 pb-2">
+          <i class="fa-solid fa-pen-ruler text-amber-400 mr-2"></i> Interaktiver Baukasten
+        </h3>
+
+        <div class="space-y-4 text-sm text-slate-200 leading-loose">
+          <p>
+            1. Eine <strong>Funktion</strong> $f$ ist eine 
+            <select id="gap-1" class="bg-slate-900 border border-indigo-500/50 rounded-lg px-2.5 py-1 text-amber-300 text-xs font-semibold focus:outline-none">
+              <option value="wrong">beliebige</option>
+              <option value="correct">eindeutige</option>
+              <option value="wrong2">zufällige</option>
+            </select>
+            Zuordnung. Jedem Element $x$ aus der 
+            <select id="gap-2" class="bg-slate-900 border border-indigo-500/50 rounded-lg px-2.5 py-1 text-amber-300 text-xs font-semibold focus:outline-none">
+              <option value="correct">Definitionsmenge $\mathbb{D}$</option>
+              <option value="wrong">Lösungsmenge $\mathbb{L}$</option>
+            </select>
+            wird 
+            <select id="gap-3" class="bg-slate-900 border border-indigo-500/50 rounded-lg px-2.5 py-1 text-amber-300 text-xs font-semibold focus:outline-none">
+              <option value="wrong">mindestens ein</option>
+              <option value="correct">genau ein</option>
+              <option value="wrong2">beliebig viele</option>
+            </select>
+            Wert $y = f(x)$ aus der Wertemenge $\mathbb{W}$ zugeordnet.
+          </p>
+
+          <p>
+            2. <strong>Vertikalentest:</strong> Jede senkrechte Gerade darf den Funktionsgraphen 
+            <select id="gap-4" class="bg-slate-900 border border-indigo-500/50 rounded-lg px-2.5 py-1 text-amber-300 text-xs font-semibold focus:outline-none">
+              <option value="wrong">mindestens zweimal</option>
+              <option value="correct">höchstens einmal</option>
+              <option value="wrong2">genau zweimal</option>
+            </select>
+            schneiden.
+          </p>
+
+          <p>
+            3. Darstellungsformen einer Funktion sind: 
+            <span class="text-indigo-300 font-semibold">Sprachlich, Wertetabelle, Funktionsgraph und Funktionsgleichung (Term $f(x)$)</span>.
+          </p>
+        </div>
+
+        <div class="pt-2">
+          <button onclick="checkMerkeintrag()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-amber-500/20 flex items-center gap-2">
+            <i class="fa-solid fa-check-double"></i> Merkeintrag prüfen & ins Merkheft übernehmen
+          </button>
+        </div>
+      </div>
+
+      <!-- Blaues Merkheft Result Card -->
+      <div id="merkheft-card" class="notebook-paper p-6 md:p-8 rounded-2xl border-2 border-indigo-500/40 shadow-2xl space-y-6 relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="flex justify-between items-center border-b border-indigo-500/30 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+              <i class="fa-solid fa-book text-lg"></i>
+            </div>
+            <div>
+              <h3 class="font-extrabold text-lg text-white tracking-wide">MERKBLATT: FUNKTIONEN (KLASSE 8)</h3>
+              <p class="text-xs text-indigo-300">Offizieller Heftaufschrieb &bull; Formelsammlung</p>
+            </div>
+          </div>
+          <button onclick="copyNotebookText()" class="bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+            <i class="fa-solid fa-copy"></i> In Zwischenablage
+          </button>
+        </div>
+
+        <div class="space-y-4 text-xs md:text-sm text-slate-100 leading-relaxed">
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/20 space-y-2">
+            <h4 class="font-bold text-indigo-300 text-sm flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-amber-400"></i> 1. Definition einer Funktion
+            </h4>
+            <p>
+              Eine <strong>Funktion</strong> $f$ ist eine <strong>eindeutige Zuordnung</strong>, die jedem Element $x$ aus der Definitionsmenge $\mathbb{D}$ <strong>genau ein</strong> Element $y$ aus der Wertemenge $\mathbb{W}$ zuordnet.
+            </p>
+            <p class="font-mono text-xs text-indigo-200 pt-1">
+              Schreibweise: $f: x \mapsto y \quad \text{oder} \quad y = f(x)$
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/20 space-y-2">
+              <h4 class="font-bold text-emerald-300 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-crosshairs"></i> 2. Punkte & Koordinaten
+              </h4>
+              <p>
+                Ein Punkt auf dem Graphen wird als $P(x \mid y)$ angegeben. Dabei ist $x$ die Stelle (Abszisse) und $y = f(x)$ der Funktionswert (Ordinate).
+              </p>
+            </div>
+
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/20 space-y-2">
+              <h4 class="font-bold text-purple-300 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-ruler-vertical"></i> 3. Vertikalentest
+              </h4>
+              <p>
+                Trifft eine senkrechte Linie den Graphen an <strong>mehr als 1 Punkt</strong>, ist die Zuordnung <strong>keine Funktion</strong>!
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-indigo-500/20 space-y-2">
+            <h4 class="font-bold text-cyan-300 text-sm">4. Darstellungsformen im Überblick</h4>
+            <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs">
+              <li><strong>Sprachlich:</strong> „Jedem $x$ wird das Doppelte vermindert um 1 zugeordnet.“</li>
+              <li><strong>Wertetabelle:</strong> Nebeneinanderstellung von $x$ und $f(x)$.</li>
+              <li><strong>Funktionsgleichung:</strong> $f(x) = 2x - 1$</li>
+              <li><strong>Funktionsgraph:</strong> Kurve im Koordinatensystem $P(x \mid f(x))$.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- Global State & MathJax Helper ---
+    let currentTab = 1;
+    let basketballAnimId = null;
+    let fillAnimId = null;
+
+    // Helper to safely trigger MathJax typesetting whenever content updates
+    function triggerMathJax() {
+      if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise().then(() => {
+          // Typeset completed successfully
+        }).catch((err) => console.log('MathJax typeset error:', err));
+      }
+    }
+
+    // Custom Toast Notification System (replaces prohibited alert/confirm)
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-indigo-600';
+      toast.className = `${bgClass} text-white text-xs px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 transition-all transform translate-y-2 opacity-0 pointer-events-auto max-w-sm`;
+      toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-info'}"></i> <span>${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // --- Tab Switching Logic ---
+    function switchTab(tabIndex) {
+      currentTab = tabIndex;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-indigo-500', 'text-indigo-400');
+        btn.classList.add('border-transparent', 'text-slate-400');
+      });
+
+      const activeContent = document.getElementById(`module-${tabIndex}`);
+      const activeBtn = document.getElementById(`tab-btn-${tabIndex}`);
+      
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-slate-400');
+        activeBtn.classList.add('border-indigo-500', 'text-indigo-400');
+      }
+
+      // Re-trigger Canvas resizing and MathJax formatting
+      setTimeout(() => {
+        if (tabIndex === 1) drawBasketballCanvas();
+        if (tabIndex === 2) drawTrainCanvas();
+        if (tabIndex === 3) updatePlotter();
+        if (tabIndex === 4) drawRulerCanvas();
+        if (tabIndex === 5) drawFillCanvas();
+        triggerMathJax();
+      }, 50);
+    }
+
+    // --- Code Unlock System ---
+    const VALID_CODES = {
+      'FUNK-101': 'sol-funk-101',
+      'FUNK-102': 'sol-funk-102',
+      'BONUS-103': 'sol-bonus-103',
+      'READ-201': 'sol-read-201',
+      'READ-202': 'sol-read-202',
+      'BONUS-203': 'sol-bonus-203',
+      'TAB-301': 'sol-tab-301',
+      'BONUS-303': 'sol-bonus-303',
+      'RULER-401': 'sol-ruler-401',
+      'BONUS-402': 'sol-bonus-402',
+      'BONUS-403': 'sol-bonus-403',
+      'FILL-501': 'sol-fill-501',
+      'FILL-502': 'sol-fill-502',
+      'BONUS-503': 'sol-bonus-503'
+    };
+
+    function checkCode(inputIdSuffix, correctCode) {
+      const input = document.getElementById(`code-${inputIdSuffix}`);
+      if (!input) return;
+
+      const userVal = input.value.trim().toUpperCase();
+      if (userVal === correctCode || userVal === 'LEHRER2026' || userVal === 'ALL') {
+        const solDiv = document.getElementById(VALID_CODES[correctCode]);
+        if (solDiv) {
+          solDiv.classList.remove('hidden');
+          showToast(`Code ${correctCode} erfolgreich eingelöst!`, 'success');
+          triggerMathJax();
+        }
+      } else {
+        showToast('Ungültiger Lehrer-Code. Bitte überprüfe deine Eingabe.', 'error');
+      }
+    }
+
+    function unlockByGlobalCode() {
+      const input = document.getElementById('global-code-input');
+      const val = input.value.trim().toUpperCase();
+      if (!val) return;
+
+      if (val === 'LEHRER2026' || val === 'ALL') {
+        Object.values(VALID_CODES).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('hidden');
+        });
+        showToast('Master-Code aktiviert! Alle Musterlösungen wurden freigeschaltet.', 'success');
+        triggerMathJax();
+        return;
+      }
+
+      if (VALID_CODES[val]) {
+        const solDiv = document.getElementById(VALID_CODES[val]);
+        if (solDiv) {
+          solDiv.classList.remove('hidden');
+          showToast(`Lösung für Code ${val} freigeschaltet!`, 'success');
+          triggerMathJax();
+        }
+      } else {
+        showToast('Unbekannter Code. Beispiel-Codes: FUNK-101, READ-201, TAB-301, LEHRER2026', 'error');
+      }
+    }
+
+    // --- Module 1 Logic & Canvas ---
+    const m1Slider = document.getElementById('m1-slider');
+    let m1Playing = false;
+
+    if (m1Slider) {
+      m1Slider.addEventListener('input', () => {
+        drawBasketballCanvas();
+        updateM1Display();
+      });
+    }
+
+    function updateM1Display() {
+      const t = parseFloat(m1Slider.value);
+      const h = (-1.5 * t * t + 4.5 * t + 1.8).toFixed(2);
+      const display = document.getElementById('m1-time-display');
+      if (display) {
+        display.innerHTML = `$t = ${t.toFixed(1).replace('.', ',')}\\text{ s} \\implies h(t) = ${h.replace('.', ',')}\\text{ m}$`;
+        triggerMathJax();
+      }
+    }
+
+    function toggleBasketballAnim() {
+      m1Playing = !m1Playing;
+      const btn = document.getElementById('m1-play-btn');
+      if (m1Playing) {
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+        animateBasketball();
+      } else {
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+      }
+    }
+
+    function animateBasketball() {
+      if (!m1Playing) return;
+      let curT = parseFloat(m1Slider.value);
+      curT += 0.02;
+      if (curT > 2.8) curT = 0;
+      m1Slider.value = curT;
+      drawBasketballCanvas();
+      updateM1Display();
+      requestAnimationFrame(animateBasketball);
+    }
+
+    function drawBasketballCanvas() {
+      const canvas = document.getElementById('basketball-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Background grid
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 30) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Trajectory curve h(t) = -1.5 t^2 + 4.5 t + 1.8
+      ctx.strokeStyle = '#6366f1';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      const maxT = 2.8;
+      const padding = 40;
+      const scaleX = (w - 2 * padding) / maxT;
+      const scaleY = (h - 2 * padding) / 6.0;
+
+      for (let t = 0; t <= maxT; t += 0.05) {
+        const ballH = -1.5 * t * t + 4.5 * t + 1.8;
+        const px = padding + t * scaleX;
+        const py = h - padding - ballH * scaleY;
+        if (t === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Draw Player & Hoop
+      const t = parseFloat(m1Slider.value);
+      const ballH = -1.5 * t * t + 4.5 * t + 1.8;
+      const px = padding + t * scaleX;
+      const py = h - padding - ballH * scaleY;
+
+      // Hoop
+      const hoopX = padding + 2.5 * scaleX;
+      const hoopY = h - padding - 3.05 * scaleY;
+      ctx.strokeStyle = '#f97316';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.strokeRect(hoopX, hoopY - 10, 20, 15);
+
+      // Ball
+      ctx.fillStyle = '#f97316';
+      ctx.beginPath();
+      ctx.arc(px, py, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    function checkM1A2() {
+      const val = parseFloat(document.getElementById('m1-a2-calc').value);
+      if (val === 3) {
+        showToast('Richtig! f(4) = 0.25 * 4 + 2 = 3.', 'success');
+      } else {
+        showToast('Leider nicht ganz. Rechne: 0,25 * 4 + 2', 'error');
+      }
+    }
+
+    // --- Module 2 Train Canvas ---
+    function drawTrainCanvas() {
+      const canvas = document.getElementById('m2-train-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      // Axes
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(40, h - 30); ctx.lineTo(w - 20, h - 30); // X-axis
+      ctx.moveTo(40, h - 30); ctx.lineTo(40, 20);      // Y-axis
+      ctx.stroke();
+
+      // Function piecewise path: (0,0) -> (30,40) -> (40,50) -> (60,50) -> (90,100)
+      const points = [
+        {t: 0, s: 0},
+        {t: 30, s: 40},
+        {t: 40, s: 50},
+        {t: 60, s: 50},
+        {t: 90, s: 100}
+      ];
+
+      const scaleX = (w - 70) / 90;
+      const scaleY = (h - 60) / 100;
+
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      points.forEach((pt, i) => {
+        const px = 40 + pt.t * scaleX;
+        const py = h - 30 - pt.s * scaleY;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+
+      // Points markers
+      points.forEach(pt => {
+        const px = 40 + pt.t * scaleX;
+        const py = h - 30 - pt.s * scaleY;
+        ctx.fillStyle = '#34d399';
+        ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+
+    const trainCanvas = document.getElementById('m2-train-canvas');
+    if (trainCanvas) {
+      trainCanvas.addEventListener('mousemove', (e) => {
+        const rect = trainCanvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const w = trainCanvas.clientWidth;
+        const scaleX = (w - 70) / 90;
+        let t = Math.round((mouseX - 40) / scaleX);
+        if (t < 0) t = 0; if (t > 90) t = 90;
+
+        // Piecewise calculation
+        let s = 0;
+        if (t <= 30) s = (40 / 30) * t;
+        else if (t <= 40) s = 40 + (10 / 10) * (t - 30);
+        else if (t <= 60) s = 50;
+        else s = 50 + (50 / 30) * (t - 60);
+
+        const coordsEl = document.getElementById('m2-hover-coords');
+        if (coordsEl) {
+          coordsEl.innerHTML = `$P(${t}\\text{ min} \\mid ${Math.round(s)}\\text{ km})$`;
+          triggerMathJax();
+        }
+      });
+    }
+
+    // --- Module 3 Plotter Logic ---
+    function updatePlotter() {
+      const m = parseFloat(document.getElementById('m3-m').value) || 0;
+      const b = parseFloat(document.getElementById('m3-b').value) || 0;
+
+      const formulaDisplay = document.getElementById('m3-formula-display');
+      if (formulaDisplay) {
+        const sign = b >= 0 ? '+' : '-';
+        formulaDisplay.innerHTML = `$f(x) = ${m}\\cdot x ${sign} ${Math.abs(b)}$`;
+        triggerMathJax();
+      }
+
+      // Update table
+      const tbody = document.getElementById('m3-table-body');
+      if (tbody) {
+        const xVals = [-2, -1, 0, 1, 2, 3];
+        const rowsHTML = `<tr>
+          <td class="p-2 border border-slate-700 font-bold text-slate-300">$f(x)$</td>
+          ${xVals.map(x => `<td class="p-2 border border-slate-700">${(m * x + b).toFixed(1)}</td>`).join('')}
+        </tr>`;
+        tbody.innerHTML = rowsHTML;
+      }
+
+      drawPlotterCanvas(m, b);
+    }
+
+    function drawPlotterCanvas(m, b) {
+      const canvas = document.getElementById('m3-plotter-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const cx = w / 2;
+      const cy = h / 2;
+      const unit = w / 12; // -6 to +6 grid
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Grid
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += unit) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += unit) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Main Axes
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+      ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
+      ctx.stroke();
+
+      // Line f(x) = mx + b
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      const xMin = -6, xMax = 6;
+      const yMin = m * xMin + b;
+      const yMax = m * xMax + b;
+
+      ctx.moveTo(cx + xMin * unit, cy - yMin * unit);
+      ctx.lineTo(cx + xMax * unit, cy - yMax * unit);
+      ctx.stroke();
+
+      // Points from table
+      [-2, -1, 0, 1, 2, 3].forEach(x => {
+        const y = m * x + b;
+        const px = cx + x * unit;
+        const py = cy - y * unit;
+        ctx.fillStyle = '#22d3ee';
+        ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+
+    // --- Module 4 Ruler Logic ---
+    let rulerCurve = 'parabola';
+    const rulerSlider = document.getElementById('m4-ruler-slider');
+
+    if (rulerSlider) {
+      rulerSlider.addEventListener('input', () => {
+        drawRulerCanvas();
+        const x0 = parseFloat(rulerSlider.value);
+        const xValEl = document.getElementById('m4-x-val');
+        if (xValEl) {
+          xValEl.innerHTML = `$x = ${x0.toFixed(1).replace('.', ',')}$`;
+          triggerMathJax();
+        }
+      });
+    }
+
+    function setRulerCurve(curve) {
+      rulerCurve = curve;
+      drawRulerCanvas();
+    }
+
+    function drawRulerCanvas() {
+      const canvas = document.getElementById('m4-ruler-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const cx = w / 2;
+      const cy = h / 2;
+      const unit = w / 8; // -4 to +4 grid
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Grid
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += unit) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += unit) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Axes
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+      ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
+      ctx.stroke();
+
+      // Draw Selected Curve
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      if (rulerCurve === 'parabola') {
+        for (let x = -4; x <= 4; x += 0.1) {
+          const y = 0.5 * x * x - 1;
+          const px = cx + x * unit;
+          const py = cy - y * unit;
+          if (x === -4) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+      } else if (rulerCurve === 'circle') {
+        ctx.arc(cx, cy, 2 * unit, 0, Math.PI * 2);
+      } else if (rulerCurve === 's-curve') {
+        // x = y^2 => y = +- sqrt(x)
+        for (let y = -3; y <= 3; y += 0.1) {
+          const x = y * y;
+          const px = cx + x * unit;
+          const py = cy - y * unit;
+          if (y === -3) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+      }
+      ctx.stroke();
+
+      // Vertical Ruler Line
+      const x0 = parseFloat(rulerSlider ? rulerSlider.value : 1.0);
+      const rulerPx = cx + x0 * unit;
+
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(rulerPx, 0); ctx.lineTo(rulerPx, h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Calculate intersection count
+      let intersections = 0;
+      if (rulerCurve === 'parabola') {
+        intersections = 1;
+      } else if (rulerCurve === 'circle') {
+        intersections = Math.abs(x0) < 2 ? 2 : Math.abs(x0) === 2 ? 1 : 0;
+      } else if (rulerCurve === 's-curve') {
+        intersections = x0 > 0 ? 2 : x0 === 0 ? 1 : 0;
+      }
+
+      const badge = document.getElementById('m4-status-badge');
+      if (badge) {
+        if (intersections <= 1) {
+          badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+          badge.innerHTML = `${intersections} Schnittpunkt &rarr; Ist eine Funktion!`;
+        } else {
+          badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
+          badge.innerHTML = `${intersections} Schnittpunkte &rarr; KEINE Funktion!`;
+        }
+      }
+    }
+
+    // --- Module 5 Fill Canvas Logic ---
+    let fillProgress = 0;
+    let fillRunning = false;
+
+    function toggleFillAnim() {
+      fillRunning = !fillRunning;
+      const btn = document.getElementById('m5-fill-btn');
+      if (fillRunning) {
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-pause"></i> Wasser stoppen';
+        animateFill();
+      } else {
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-play"></i> Wasser aufdrehen';
+      }
+    }
+
+    function resetFillAnim() {
+      fillRunning = false;
+      fillProgress = 0;
+      const btn = document.getElementById('m5-fill-btn');
+      if (btn) btn.innerHTML = '<i class="fa-solid fa-play"></i> Wasser aufdrehen';
+      drawFillCanvas();
+    }
+
+    function animateFill() {
+      if (!fillRunning) return;
+      fillProgress += 0.008;
+      if (fillProgress > 1.0) fillProgress = 1.0;
+      drawFillCanvas();
+      if (fillProgress < 1.0) {
+        requestAnimationFrame(animateFill);
+      } else {
+        fillRunning = false;
+        const btn = document.getElementById('m5-fill-btn');
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Fertig (Neustart)';
+      }
+    }
+
+    function drawFillCanvas() {
+      const canvas = document.getElementById('m5-fill-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const vesselType = document.getElementById('m5-vessel-select').value;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Split canvas: Left vessel (w/3), Right graph (2w/3)
+      const vWidth = w / 3;
+
+      // Draw Vessel outline
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      const topY = 40, botY = h - 40;
+      const midX = vWidth / 2;
+
+      if (vesselType === 'cylinder') {
+        ctx.strokeRect(midX - 35, topY, 70, botY - topY);
+        // Water
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
+        const waterH = (botY - topY) * fillProgress;
+        ctx.fillRect(midX - 35, botY - waterH, 70, waterH);
+      } else if (vesselType === 'cone') {
+        ctx.moveTo(midX - 50, botY); ctx.lineTo(midX + 50, botY);
+        ctx.lineTo(midX + 15, topY); ctx.lineTo(midX - 15, topY);
+        ctx.closePath(); ctx.stroke();
+        // Water
+        const waterH = (botY - topY) * fillProgress;
+        const wTop = 50 - (35 * fillProgress);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
+        ctx.beginPath();
+        ctx.moveTo(midX - 50, botY); ctx.lineTo(midX + 50, botY);
+        ctx.lineTo(midX + wTop, botY - waterH); ctx.lineTo(midX - wTop, botY - waterH);
+        ctx.fill();
+      } else {
+        ctx.strokeRect(midX - 30, topY, 60, botY - topY);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.6)';
+        const waterH = (botY - topY) * fillProgress;
+        ctx.fillRect(midX - 30, botY - waterH, 60, waterH);
+      }
+
+      // Graph on Right
+      const gx = vWidth + 40;
+      const gy = botY;
+      const gw = w - gx - 30;
+      const gh = botY - topY;
+
+      // Graph Axes
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy); ctx.lineTo(gx + gw, gy);
+      ctx.moveTo(gx, gy); ctx.lineTo(gx, topY);
+      ctx.stroke();
+
+      // Plot live h(t) curve
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      for (let p = 0; p <= fillProgress; p += 0.01) {
+        const px = gx + p * gw;
+        let pyH = p; // default cylinder
+
+        if (vesselType === 'cone') {
+          pyH = Math.sqrt(p); // concave curve
+        }
+
+        const py = gy - pyH * gh;
+        if (p === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
+    // --- Module 6 Merkeintrag Checker ---
+    function checkMerkeintrag() {
+      const g1 = document.getElementById('gap-1').value;
+      const g2 = document.getElementById('gap-2').value;
+      const g3 = document.getElementById('gap-3').value;
+      const g4 = document.getElementById('gap-4').value;
+
+      if (g1 === 'correct' && g2 === 'correct' && g3 === 'correct' && g4 === 'correct') {
+        showToast('Großartig! Alle Lücken sind korrekt ausgefüllt.', 'success');
+        const card = document.getElementById('merkheft-card');
+        card.scrollIntoView({ behavior: 'smooth' });
+        triggerMathJax();
+      } else {
+        showToast('Einige Lücken sind noch nicht korrekt. Überprüfe deine Auswahl!', 'error');
+      }
+    }
+
+    function copyNotebookText() {
+      const text = `MERKBLATT: FUNKTIONEN (KLASSE 8)
+1. Definition: Eine Funktion f ist eine eindeutige Zuordnung x -> f(x).
+2. Vertikalentest: Jede senkrechte Linie schneidet den Graphen höchstens 1-mal.
+3. Darstellungsformen: Sprachlich, Wertetabelle, Graph, Funktionsgleichung.`;
+      
+      const el = document.createElement('textarea');
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      showToast('Merktext wurde in die Zwischenablage kopiert!', 'info');
+    }
+
+    // Initialize all canvas renders on window load
+    window.addEventListener('load', () => {
+      drawBasketballCanvas();
+      drawTrainCanvas();
+      updatePlotter();
+      drawRulerCanvas();
+      drawFillCanvas();
+      triggerMathJax();
+    });
+
+    window.addEventListener('resize', () => {
+      if (currentTab === 1) drawBasketballCanvas();
+      if (currentTab === 2) drawTrainCanvas();
+      if (currentTab === 3) updatePlotter();
+      if (currentTab === 4) drawRulerCanvas();
+      if (currentTab === 5) drawFillCanvas();
+    });
+  </script>
+</body>
+</html>
